@@ -1,0 +1,252 @@
+// import userModel from "../models/userModel";
+const profileModel = require('../models/profileModel')
+const userModel = require('../models/userModel')
+const { uploadOnCloundinary } = require('../service/imageUpload.js');
+
+
+//create profile
+const createProfile = async (req, res) => {
+
+    const userId = req.query.userId; // get userID
+    console.log("=>", userId);
+
+    try {
+
+        const users = await userModel.findById(userId); // check user in DB
+        if (users) {
+
+            // check if user profile is created or not
+            const checkProfile = await profileModel.find({ userID: users._id });
+            console.log("checkProfile", checkProfile)
+
+            if (checkProfile.length == 0) {
+
+                const file = req.file.path //get temp img file 
+
+                const result = await uploadOnCloundinary(file); // uplod into clodinariy
+                console.log("file", result)
+
+                console.log("File uploaded to Cloudinary", result);
+
+                const { name, username, bio } = req.body;
+
+                if (!name) {
+                    return res.send({ error: "Name is Required" });
+                }
+                if (!username) {
+                    return res.send({ message: "username is Required" });
+                }
+                if (!bio) {
+                    return res.send({ message: "bio is Required" });
+                }
+                if (!result) {
+                    return res.send({ message: "Profile pic is Required" });
+                }
+
+                console.log("Received data", name, username, bio, result)
+
+
+
+                // Save profile data to the database
+                const newProfile = new profileModel({
+                    name,
+                    username,
+                    bio,
+                    userID: userId,
+                    profilePicture: result.secure_url,
+                });
+
+                await newProfile.save();
+
+                return res.status(200).json({
+                    message: 'Profile created successfully',
+                    newProfile,
+                    success: true
+
+                });
+
+
+            } else {
+                return res.send({ error: "Profile Found In DB" });
+            }
+
+        } else {
+            return res.send({ error: "User not Found In DB" });
+
+        }
+
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            message: "Error in Profile creation",
+            error: error.message
+        });
+    }
+
+
+}
+//edit profile
+const editProfile = async (req, res) => {
+    var userId = req.query.Id; // get user ID
+    console.log("userId", userId)
+
+    try {
+
+        // console.log("userId", userId)
+        const users = await userModel.findById(userId); // check user in DB
+        console.log("users", users)
+        if (users) {
+            const getProfile = await profileModel.findOne({ userID: userId });// check if user has profile In DB
+            console.log("getProfile", getProfile)
+
+
+            if (getProfile) {
+
+                console.log("1")
+
+                const file = req.file.path //get temp img file 
+
+                const result = await uploadOnCloundinary(file); // uplod into clodinariy
+                console.log("file", result)
+
+                console.log("File uploaded to Cloudinary", result);
+
+                const { name, username, bio } = req.body;
+
+                if (!name) {
+                    return res.send({ error: "Name is Required" });
+                }
+                if (!username) {
+                    return res.send({ message: "username is Required" });
+                }
+                if (!bio) {
+                    return res.send({ message: "bio is Required" });
+                }
+                if (!result) {
+                    return res.send({ message: "Profile pic is Required" });
+                }
+
+                console.log("Received data", name, username, bio, result)
+
+
+
+                const editProf = await profileModel.findByIdAndUpdate(
+                    getProfile._id,
+                    {
+                        name: name,
+                        username: username,
+                        bio: bio,
+                        profilePicture: result.secure_url,
+                    },
+
+                    { new: true }
+                );
+
+                console.log("editProf", editProf)
+                res.status(201).send({
+                    success: true,
+                    message: "Profile Updated Successfully",
+                    editProf,
+                });
+
+            } else {
+                return res.send({ message: "Profile not found in DB" });
+
+            }
+        } else {
+            return res.send({ message: "user not found in DB" });
+
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Errro in editProfile controller",
+            error,
+        });
+    }
+}
+//followUser
+const followUser = async (req, res) => {
+    try {
+        const { userIdToFollow } = req.params;
+        const userId = req.user._id; // Assuming you have user authentication middleware
+        //   console.log("userId",userId,userIdToFollow)
+
+        // Check if the user is trying to follow themselves
+        if (userId === userIdToFollow) {
+            return res.status(400).json({ message: "You can't follow yourself" });
+        }
+
+        const userToFollow = await userModel.findById(userIdToFollow);
+        const currentUser = await userModel.findById(userId);
+
+        //   console.log("==>",currentUser,userToFollow)
+
+        // Check if the userToFollow and currentUser exist
+        if (!userToFollow || !currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the currentUser is already following the userToFollow
+        if (!currentUser.following.includes(userIdToFollow)) {
+            currentUser.following.push(userIdToFollow);
+            userToFollow.followers.push(userId);
+            await currentUser.save();
+            await userToFollow.save();
+
+            return res.status(200).json({ message: 'User followed successfully' });
+        } else {
+            return res.status(400).json({ message: 'User is already followed' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+//unfollowUser
+
+const unfollowUser = async (req, res) => {
+    try {
+        const { userIdToUnfollow } = req.params;
+        const userId = req.user._id; // Assuming you have user authentication middleware
+        console.log(userId);
+
+        const userToUnfollow = await userModel.findById(userIdToUnfollow);
+        const currentUser = await userModel.findById(userId);
+
+        console.log("unfollow", userToUnfollow, currentUser)
+
+        // Check if the userToUnfollow and currentUser exist
+        if (!userToUnfollow || !currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+
+        // Check if the currentUser is following the userToUnfollow
+        if (currentUser.following.includes(userIdToUnfollow)) {
+            console.log(currentUser.following, userIdToUnfollow);
+            currentUser.following = currentUser.following.filter(followingId => followingId.toString() !== userIdToUnfollow.toString());
+            userToUnfollow.followers = userToUnfollow.followers.filter(followerId => followerId.toString() !== userId.toString());
+
+            await currentUser.save();
+            await userToUnfollow.save();
+
+
+            return res.status(200).json({ message: 'User unfollowed successfully' });
+        } else {
+            return res.status(400).json({ message: 'User is not followed' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+
+module.exports = { editProfile, followUser, unfollowUser, createProfile };
