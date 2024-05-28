@@ -1,6 +1,6 @@
 require('dotenv').config()
 require("./config/database").connect()
-const passport = require('passport')
+// const passport = require('passport')
 const express = require('express');
 const app = express();
 const port = 3001; // You can use any available port
@@ -20,7 +20,7 @@ app.use(cors({
 
 
 
-require('./config/passport')(passport)
+// require('./config/passport')(passport)
 // app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
 app.use(express.json()) // discuss this later       
 app.use(express.urlencoded({ extended: true }))
