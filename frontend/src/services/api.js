@@ -26,10 +26,19 @@ export const loginUser = async (email, password) => {
     const response = await API.post('/auth/login', { email, password });
     return response.data;
 };
-export const signupUser = (userData) => API.post('/auth/signup', userData);
+export const signupUser = (userData) => API.post('/auth/sig̀nup', userData);
 
 // Profile
 export const createProfile = (profileData) => API.post('/profile', profileData);
+export const getProfile = async (id) => {
+    try {
+        const response = await API.get(`/get-profile/?userId=${id}`);
+        console.log(response.data); // Do something with the data
+        return response.data;
+    } catch (error) {
+        console.error('Error in getProfile:', error);
+    }
+}
 
 export const getPosts = async () => {
 
@@ -56,11 +65,45 @@ export const fetchFollowedUsersPosts = async () => {
         console.error('Error:', error);
     }
 };
+
+export const addPostApi = async (formData) => {
+    const token = localStorage.getItem('token'); // or wherever you store your JWT
+    setAuthToken(token);
+
+    try {
+        const response = await API.post('/createPost');
+        console.log(response.data)
+
+        return response.data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
+// like post 
+
+export const likePost = async (id) => {
+    const token = localStorage.getItem('token'); // or wherever you store your JWT
+    setAuthToken(token);
+
+    try {
+        const response = await API.post(`/post/?id=${id}`)
+
+        return response.data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
+
 // Posts
 // export const getPosts = () => API.get('/all-posts');
 // export const followed_users_posts = () => API.get('/followed-users-posts');
+
 export const addPost = (postData) => API.post('/posts', postData);
-export const likePost = (postId) => API.post(`/posts/${postId}/like`);
+// export const likePost = (postId) => API.post(`/posts/${postId}/like`);
 export const commentOnPost = (postId, comment) => API.post(`/posts/${postId}/comment`, { comment });
 
 // User

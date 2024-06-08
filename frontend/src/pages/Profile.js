@@ -1,41 +1,69 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { getProfile } from '../services/api';
 
-const ProfilePage = ({ userId }) => {
+// Shimmer component
+const Shimmer = () => (
+    <div className="animate-pulse  rounded-full w-48 h-48"></div>
+);
+
+const ProfilePage = () => {
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
+
+    const { id } = useParams()
+    console.log(id, "userId")
 
     useEffect(() => {
         // Fetch profile data
         const fetchProfile = async () => {
             try {
-                const profileResponse = await axios.get(`/api/profile/${userId}`);
-                setProfile(profileResponse.data);
+                const profileResponse = await getProfile(id);
+                console.log("profileResponse", profileResponse)
+                setProfile(profileResponse.profile);
+                setPosts(profileResponse.profile.posts)
             } catch (error) {
                 console.error("Error fetching profile data:", error);
             }
         };
 
-        // Fetch posts
-        const fetchPosts = async () => {
-            try {
-                const postsResponse = await axios.get(`/api/posts/user/${userId}`);
-                setPosts(postsResponse.data);
-            } catch (error) {
-                console.error("Error fetching posts:", error);
-            }
-        };
+
 
         fetchProfile();
-        fetchPosts();
-    }, [userId]);
 
-    if (!profile) return <div>Loading...</div>;
+    }, [id]);
+
+    if (!profile) {
+        return (
+            <div className="max-w-4xl mx-auto p-4 bg-slate-500 text-white">
+                <div className="flex items-center space-x-6 mb-6">
+                    <Shimmer /> {/* Shimmer effect for profile picture */}
+                    <div>
+                        <div className="flex items-center space-x-4">
+                            <Shimmer /> {/* Shimmer effect for username */}
+                            <Shimmer /> {/* Shimmer effect for follow button */}
+                        </div>
+                        <div className="flex space-x-6 mt-2">
+                            <Shimmer /> {/* Shimmer effect for posts count */}
+                            <Shimmer /> {/* Shimmer effect for followers count */}
+                            <Shimmer /> {/* Shimmer effect for following count */}
+                        </div>
+                        <div className="mt-4">
+                            <Shimmer /> {/* Shimmer effect for bio */}
+                            <Shimmer /> {/* Shimmer effect for posts */}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
 
     return (
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-4xl mx-auto p-4 bg-gray-800 text-white">
             <div className="flex items-center space-x-6 mb-6">
-                <img src={profile.profilePicture} alt="Profile" className="w-24 h-24 rounded-full" />
+                <img src={profile.profilePicture} alt="Profile" className="w-48 h-48 rounded-full" />
                 <div>
                     <div className="flex items-center space-x-4">
                         <h2 className="text-2xl font-semibold">{profile.username}</h2>
@@ -63,5 +91,6 @@ const ProfilePage = ({ userId }) => {
         </div>
     );
 };
+
 
 export default ProfilePage;

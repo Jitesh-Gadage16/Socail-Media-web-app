@@ -10,7 +10,7 @@ const router = express.Router();
 
 
 router.post("/createPost", requireSignIn, upload.single('file'), createPost);
-router.post("/post/:id", requireSignIn, likePost);
+router.post("/post/", requireSignIn, likePost);
 router.get("/followed-users-posts", requireSignIn, getFollowedUsersPosts);
 router.get("/all-posts", getAllUserPost);
 

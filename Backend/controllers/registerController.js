@@ -1,5 +1,6 @@
 // import userModel from "../models/userModel";
 const userModel = require('../models/userModel')
+const profileModel = require('../models/profileModel.js')
 const { comparePassword, hashPassword } = require('../helpers/authHelpers.js')
 const JWT = require('jsonwebtoken')
 
@@ -71,6 +72,9 @@ const signInController = async (req, res) => {
             });
         }
 
+
+
+
         const match = await comparePassword(password, user.password);
         if (!match) {
             return res.status(200).send({
@@ -81,28 +85,33 @@ const signInController = async (req, res) => {
 
         const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "30m",
-          });
+        });
 
-          // Set the token in a cookie with the name 'token' and expiration time of 30 minutes
+        // Set the token in a cookie with the name 'token' and expiration time of 30 minutes
         res.cookie('token', token, { httpOnly: true, maxAge: 30 * 60 * 1000 });
 
-       
+        // Fetch user profile if it exists
+        const profile = await profileModel.findOne({ userID: user._id });
+        console.log("profile", profile)
 
 
-          res.status(200).send({
+
+
+        res.status(200).send({
             success: true,
             message: "login successfully",
             user: {
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              role:user.role
-              
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                profilePic: profile.profilePicture[0]
+
             },
             token,
-          });
+        });
 
-          console.log("login successfully",user)
+        console.log("login successfully", user)
     } catch (error) {
 
     }

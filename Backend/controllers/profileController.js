@@ -1,5 +1,7 @@
 // import userModel from "../models/userModel";
 const profileModel = require('../models/profileModel')
+const postModel = require('../models/mediaPostModel.js')
+
 const userModel = require('../models/userModel')
 const { uploadOnCloundinary } = require('../service/imageUpload.js');
 
@@ -249,4 +251,76 @@ const unfollowUser = async (req, res) => {
 };
 
 
-module.exports = { editProfile, followUser, unfollowUser, createProfile };
+const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.query.userId;
+        console.log("userID", userId);
+
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
+
+        // Fetch the user's profile
+        const profile = await profileModel.findOne({ userID: userId });
+        if (!profile) {
+            return res.status(404).json({ success: false, message: 'Profile not found' });
+        }
+
+        // Fetch the user's posts
+        const posts = await postModel.find({ user: userId }).sort({ createdAt: -1 });
+
+        // Fetch the user's data to get followers and following
+        const user = await userModel.findById(userId, 'followers following');
+
+        const followersCount = user.followers.length;
+        const followingCount = user.following.length;
+
+        console.log(followersCount, followingCount)
+
+        // Aggregation query to get followers and following count
+        // const counts = await userModel.aggregate([
+        //     {
+        //         $facet: {
+        //             followersCount: [
+        //                 { $match: { followArray: userId } },
+        //                 { $count: "count" }
+        //             ],
+        //             followingCount: [
+        //                 { $match: { _id: userId } },
+        //                 { $project: { followingCount: { $size: "$followArray" } } }
+        //             ]
+        //         }
+        //     }
+        // ]);
+
+        // console.log(counts, "counts")
+
+        // const followersCount = counts[0].followersCount[0] ? counts[0].followersCount[0].count : 0;
+        // const followingCount = counts[0].followingCount[0] ? counts[0].followingCount[0].followingCount : 0;
+
+        console.log(profile);
+
+        return res.status(200).json({
+            success: true,
+            profile: {
+                ...profile.toObject(),
+                postsCount: posts.length,
+                followersCount,
+                followingCount,
+                posts
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching profile',
+            error: error.message
+        });
+    }
+};
+
+
+
+module.exports = { editProfile, followUser, unfollowUser, createProfile, getUserProfile };

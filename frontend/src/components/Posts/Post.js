@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Post = ({ profilePic, username, postImage, timestamp, postVideo, likeCount }) => {
+const Post = ({ profilePic, username, postImage, timestamp, postVideo, likesCount, onDoubleClick }) => {
     return (
-        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden" onDoubleClick={onDoubleClick}>
             <div className="flex items-center px-4 py-3">
                 <img className="h-8 w-8 rounded-full object-cover" src={profilePic} alt="profile" />
                 <div className="ml-3">
@@ -14,16 +14,16 @@ const Post = ({ profilePic, username, postImage, timestamp, postVideo, likeCount
                 <img
                     src={postImage}
                     alt="Post"
-                    className="object-cover w-full h-full rounded-lg"
-                    style={{ maxWidth: '400px' }}
+                    className="object-cover w-full h-full rounded-lg transition-all duration-500 ease-in-out hover:opacity-90 hover:scale-110"
+
                 />
             )}
             {postVideo && (
                 <video
                     src={postVideo}
                     controls
-                    className="object-cover w-full h-full rounded-lg"
-                    style={{ maxWidth: '400px' }}
+                    className="object-cover w-full h-full rounded-lg transition-all duration-500 ease-in-out hover:opacity-90 hover:scale-110"
+
                 ></video>
             )}
             <div className="p-4">
@@ -31,12 +31,13 @@ const Post = ({ profilePic, username, postImage, timestamp, postVideo, likeCount
                     <strong>{username}</strong>
                 </p>
                 <div className="flex space-x-4 mt-2">
-                    <button className="text-blue-500 hover:text-blue-600">Like</button>
+                    <div className="text-blue-500 hover:text-blue-600">{likesCount} <span onClick={onDoubleClick}>likes</span> </div>
                     <button className="text-blue-500 hover:text-blue-600">Comment</button>
                 </div>
-                <div className="mt-2">
-                    <p className="text-gray-600 text-sm">{likeCount} {likeCount === 1 ? 'like' : 'likes'}</p>
-                </div>
+                {/* <div className="mt-2">
+                    <p>{likesCount} likes</p>
+                    <p className="text-gray-600 text-sm">{likesCount} {likesCount === 1 ? 'like' : 'likes'}</p>
+                </div> */}
             </div>
         </div>
     );

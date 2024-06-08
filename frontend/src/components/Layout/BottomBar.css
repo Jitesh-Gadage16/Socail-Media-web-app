@@ -1,0 +1,33 @@
+/* src/components/Layout/BottomBar.css */
+.bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 0;
+    background-color: #1f2937;
+    /* Tailwind's bg-gray-800 */
+    color: white;
+    border-top: 1px solid #374151;
+    /* Tailwind's border-gray-700 */
+}
+
+.bottom-bar a,
+.bottom-bar button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+}
+
+.bottom-bar a:hover,
+.bottom-bar button:hover {
+    color: #9CA3AF;
+    /* Tailwind's text-gray-400 */
+}
+
+.bottom-bar span {
+    font-size: 0.75rem;
+    /* text-xs */
+    margin-top: 2px;
+}

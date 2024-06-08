@@ -68,7 +68,7 @@ const likePost = async (req, res) => {
     try {
         const userId = req.user._id; // Assuming you have user authentication middleware
 
-        const postId = req.params.id; // Assuming the tournament ID is passed in the request params
+        const postId = req.query.id; // Assuming the tournament ID is passed in the request params
 
         console.log("=>", userId, postId)
 
@@ -104,6 +104,7 @@ const likePost = async (req, res) => {
     }
 };
 //get following users posts
+// Get posts from followed users
 const getFollowedUsersPosts = async (req, res) => {
     try {
         const userId = req.user && req.user._id;
@@ -111,25 +112,44 @@ const getFollowedUsersPosts = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
-        const usersArray = await userModel.findById(userId, 'following');
-        console.log("==>", usersArray.following);
 
-        const followArray = usersArray.following;
-        if (!followArray) {
-            return res.status(404).json({ message: 'User not found' });
+        // Fetch the user's following array
+        const user = await userModel.findById(userId, 'following');
+        if (!user || !user.following) {
+            return res.status(404).json({ message: 'User not found or no following users' });
         }
 
-        // const followedUserIds = userModel.followArray.map(followedUser => followedUser._id);
-        const followedUserIds = followArray.map(objectId => objectId.toString());
-        console.log("followedUserIds", followedUserIds)
+        const followedUserIds = user.following.map(objectId => objectId.toString());
+        console.log("Followed User IDs:", followedUserIds);
 
+        // Fetch profiles of followed users
+        const profiles = await profileModel.find({ userID: { $in: followedUserIds } });
+        console.log("Profiles:", profiles);
+
+        // Create a map of userID to profile picture for quick lookup
+        const profileMap = {};
+        profiles.forEach(profile => {
+            profileMap[profile.userID] = profile.profilePicture; // Assuming profilePicture is an array
+        });
+
+        // Fetch posts of followed users
         const posts = await postModel.find({ user: { $in: followedUserIds } })
-            .populate('user', 'name email')  // Populate user details if needed
-            .sort({ createdAt: -1 });       // Sort posts by creation date (latest first)
+            .populate('user', 'name email') // Populate user details if needed
+            .sort({ createdAt: -1 }); // Sort posts by creation date (latest first)
+
+        // Attach profile pictures to posts
+        const formattedPosts = posts.map(post => ({
+            ...post.toObject(),
+            user: {
+                ...post.user.toObject(),
+
+            },
+            profilePicture: profileMap[post.user._id] ? profileMap[post.user._id][0] : null
+        }));
 
         return res.status(200).json({
             message: 'Posts from followed users retrieved successfully',
-            posts
+            posts: formattedPosts
         });
     } catch (error) {
         console.error(error);
@@ -141,17 +161,41 @@ const getFollowedUsersPosts = async (req, res) => {
     }
 };
 
+
 //get all users post
 const getAllUserPost = async (req, res) => {
     try {
-
+        // Fetch all posts and populate user details
         const posts = await postModel.find()
-            .populate('user', 'name email')  // Populate user details if needed
-            .sort({ createdAt: -1 });        // Sort posts by creation date (latest first)
+            .populate('user', 'name email userID _id')
+            .sort({ createdAt: -1 }); // Sort posts by creation date (latest first)
+
+        // Extract all user IDs from the posts
+        const userIDs = posts.map(post => post.user.userID);
+
+        // Fetch all profiles in one go using the extracted user IDs
+        const profiles = await profileModel.find({ userID: { $in: userIDs } });
+
+
+        // Create a map of userID to profile for quick lookup
+        const profileMap = {};
+        profiles.forEach(profile => {
+            profileMap[profile.userID] = profile.profilePicture; // Assuming profilePicture is an array
+        });
+
+        // Add profile pictures to posts
+        const formattedPosts = posts.map(post => ({
+            ...post.toObject(),
+            user: {
+                ...post.user.toObject(),
+
+            },
+            profilePicture: profileMap[post.user.userID] ? profileMap[post.user.userID][0] : null
+        }));
 
         return res.status(200).json({
             message: 'All posts retrieved successfully',
-            posts
+            posts: formattedPosts,
         });
     } catch (error) {
         console.error(error);
@@ -161,7 +205,8 @@ const getAllUserPost = async (req, res) => {
             error: error.message
         });
     }
-}
+};
+
 
 // Add a comment to a post
 const addComment = async (req, res) => {
