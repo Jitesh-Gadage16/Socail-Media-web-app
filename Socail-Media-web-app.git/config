@@ -1,0 +1,10 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = https://github.com/Jitesh-Gadage16/Socail-Media-web-app.git
+	fetch = +refs/*:refs/*
+	mirror = true
