@@ -13,15 +13,21 @@ const expressLayouts = require('express-ejs-layouts');
 // const fileUpload = require('express-fileupload');
 
 const cors = require('cors');
-app.use(cors());
+const allowedOrigins = ['https://socail-media-web-app-dt7e.vercel.app'];
 
-app.use(cors({
-  origin: 'https://socail-media-web-app.vercel.app/',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
 
+app.use(cors(corsOptions));
 
 
 // require('./config/passport')(passport)
