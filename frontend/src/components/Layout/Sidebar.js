@@ -63,7 +63,7 @@ const Sidebar = () => {
                                 </Link>
                             </li>
                             <li className="mb-4">
-                                <Link to="/signup" className="flex items-center text-lg">
+                                <Link to="/Signup" className="flex items-center text-lg">
                                     <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
                                     Signup
                                 </Link>

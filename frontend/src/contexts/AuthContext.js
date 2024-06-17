@@ -34,6 +34,21 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const signup = async (name, email, password) => {
+        try {
+            const response = await axios.post('https://socail-media-web-app.vercel.app/api/v1/register', { name, email, password });
+            const { token, user } = response.data;
+            setUser(user);
+            setToken(token);
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        } catch (err) {
+            console.error('Signup error:', err);
+            throw new Error('Failed to sign up');
+        }
+    };
+
     const logout = () => {
         setUser(null);
         setToken('');
@@ -43,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
+        <AuthContext.Provider value={{ user, token, login, signup, logout }}>
             {children}
         </AuthContext.Provider>
     );
