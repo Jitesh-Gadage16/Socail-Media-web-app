@@ -1,28 +1,40 @@
 // src/pages/Home.js
 import React, { useEffect, useState } from 'react';
-import { getPosts, fetchFollowedUsersPosts, likePost } from '../services/api';
+import { getPosts, fetchFollowedUsersPosts, likePost, fetchStories } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import Post from '../components/Posts/Post'
+import Story from '../components/Story';
+import Addstory from '../components/Addstory';
+import StoryViewer from '../components/Storyviewer';
 
 const Home = () => {
     const { user } = useAuth();
     console.log("user", user)
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [stories, setStories] = useState([]);
+    const [showStoryViewer, setShowStoryViewer] = useState(false);
+    const [currentUserStories, setCurrentUserStories] = useState([]);
+
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 let fetchedPosts;
+                let fetchedStories;
                 if (user) {
                     // Fetch posts from followed users if user is logged in
                     fetchedPosts = await fetchFollowedUsersPosts();
+                    fetchedStories = await fetchStories();
                 } else {
                     // Fetch all posts if user is not logged in
                     fetchedPosts = await getPosts();
+                    fetchedStories = [];
                 }
                 console.log("fetchedPosts", fetchedPosts.posts[0].likes)
+                console.log("fetchedStories", fetchedStories)
                 setPosts(fetchedPosts.posts);
+                setStories(fetchedStories.stories);
             } catch (error) {
                 console.error('Error fetching posts:', error);
             } finally {
@@ -46,12 +58,46 @@ const Home = () => {
         }
     };
 
+    const handleStoryAdded = async () => {
+        try {
+            const fetchedStories = await fetchStories();
+            setStories(fetchedStories.stories);
+        } catch (error) {
+            console.error('Error fetching stories:', error);
+        }
+    };
+
+    const handleStoryClick = (userStories) => {
+        console.log("click story")
+        setCurrentUserStories(userStories);
+        setShowStoryViewer(true);
+
+    };
+
+    const handleCloseStoryViewer = () => {
+        setShowStoryViewer(false);
+    };
+
     if (loading) {
         return <div className="flex items-center justify-center h-screen">Loading...</div>;
     }
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto p-4 bg-gray-800 text-white">
+
+            {(stories && stories.length > 0) && (
+                <div className="flex space-x-4 overflow-x-auto py-4">
+                    <Addstory onStoryAdded={handleStoryAdded} />
+                    {stories.map(storyGroup => (
+                        <Story
+                            key={storyGroup.user._id}
+                            profilePic={storyGroup.storiesdata[0].media}
+                            username={storyGroup.user.name}
+                            onClick={() => handleStoryClick(storyGroup.storiesdata)}
+                        />
+                    ))}
+                </div>
+            )}
             {posts.map(post => (
                 <Post
                     key={post._id}
@@ -66,6 +112,13 @@ const Home = () => {
                     onDoubleClick={() => handleDoubleClick(post._id)}
                 />
             ))}
+
+            {showStoryViewer && (
+                <StoryViewer
+                    stories={currentUserStories}
+                    onClose={handleCloseStoryViewer}
+                />
+            )}
         </div>
     );
 };

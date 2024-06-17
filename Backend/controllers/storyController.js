@@ -101,4 +101,52 @@ const viewStory = async (req, res) => {
     }
 }
 
-module.exports = { createStory, viewStory };
+const getStoriesOfFollowedUsers = async (req, res) => {
+    try {
+        const userId = req.user._id; // Assuming you have user authentication middleware
+
+        // Get the user from the database
+        const user = await userModel.findById(userId).populate('following');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Get the list of followed user IDs
+        const followedUserIds = user.following.map(followedUser => followedUser._id);
+
+        // Find stories created by the followed users
+        const stories = await storyModel.find({
+            user: { $in: followedUserIds },
+            createdAt: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) } // Fetch stories from the last 24 hours
+        }).populate('user', 'name profilePic');
+
+        // Group stories by user
+        const groupedStories = stories.reduce((acc, story) => {
+            const userId = story.user._id;
+            if (!acc[userId]) {
+                acc[userId] = {
+                    user: {
+                        _id: userId,
+                        name: story.user.name,
+                        profilePic: story.user.profilePic,
+                    },
+                    storiesdata: [],
+                };
+            }
+            acc[userId].storiesdata.push(story);
+            return acc;
+        }, {});
+
+        // Convert groupedStories object to an array
+        const response = Object.values(groupedStories);
+
+        res.status(200).json({ stories: response });
+    } catch (error) {
+        console.error('Error fetching stories of followed users:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+module.exports = { createStory, viewStory, getStoriesOfFollowedUsers };

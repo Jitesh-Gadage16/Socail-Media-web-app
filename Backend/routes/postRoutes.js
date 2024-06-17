@@ -1,6 +1,6 @@
 const express = require('express')
 const { createPost, likePost, getFollowedUsersPosts, getAllUserPost, addComment } = require('../controllers/postController.js')
-const { createStory, viewStory } = require('../controllers/storyController.js')
+const { createStory, viewStory, getStoriesOfFollowedUsers } = require('../controllers/storyController.js')
 const { isAdmin, requireSignIn, authenticateUser } = require('../middlewares/authMiddlewares')
 const upload = require('../middlewares/multerMiddlewares.js')
 
@@ -22,6 +22,7 @@ router.post('/comments/:postId', requireSignIn, addComment);
 
 //add story 
 router.post("/addstory", requireSignIn, upload.single('file'), createStory);
+router.get("/stories/following", requireSignIn, getStoriesOfFollowedUsers);
 router.post('/stories/:storyId', viewStory);
 
 

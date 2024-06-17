@@ -31,7 +31,7 @@ app.set('view engine', 'ejs');
 app.use(expressLayouts);
 
 app.get('/', (req, res) => {
-  res.render('index');
+  res.json('hello');
 });
 
 
