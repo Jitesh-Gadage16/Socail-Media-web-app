@@ -125,10 +125,21 @@ export const fetchStories = async () => {
     }
 };
 
+export const addProfile = async (formData) => {
+    const token = localStorage.getItem('token'); // or wherever you store your JWT
+    setAuthToken(token);
 
-// Posts
-// export const getPosts = () => API.get('/all-posts');
-// export const followed_users_posts = () => API.get('/followed-users-posts');
+    try {
+        const response = await API.post('/profile')
+
+        return response.data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
+
 
 export const addPost = (postData) => API.post('/posts', postData);
 // export const likePost = (postId) => API.post(`/posts/${postId}/like`);

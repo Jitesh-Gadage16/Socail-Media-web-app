@@ -9,7 +9,8 @@ const { uploadOnCloundinary } = require('../service/imageUpload.js');
 //create profile
 const createProfile = async (req, res) => {
 
-    const userId = req.query.userId; // get userID
+    const userId = req.user._id;; // get userID
+
     console.log("=>", userId);
 
     try {

@@ -18,7 +18,7 @@ const router = express.Router();
 
 // //routing
 // //REGISTER || METHOD POST
-router.post("/profile", upload.single('file'), createProfile);
+router.post("/profile", requireSignIn, upload.single('file'), createProfile);
 // router.post("/addprofile", upload.single('file'), addProfile);
 router.put("/profile", upload.single('file'), editProfile);
 // Route to get user profile

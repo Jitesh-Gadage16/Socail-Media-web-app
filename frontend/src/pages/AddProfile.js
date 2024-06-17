@@ -3,32 +3,31 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { addProfile } from '../services/api';
 
 const AddProfile = () => {
-    const [profilePic, setProfilePic] = useState(null);
+    const [file, setFile] = useState(null);
     const [bio, setBio] = useState('');
     const [username, setUsername] = useState('');
     const { user } = useAuth();
     const navigate = useNavigate();
 
     const handleProfilePicChange = (e) => {
-        setProfilePic(e.target.files[0]);
+        setFile(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append('profilePic', profilePic);
+        formData.append('file', file);
         formData.append('bio', bio);
         formData.append('username', username);
         formData.append('name', user.name);
 
         try {
-            await axios.post('https://socail-media-web-app.vercel.app/api/v1/add-profile', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const response = await addProfile(formData,);
+            console.log("response", response)
+
             navigate('/'); // Redirect to home page after successful profile creation
         } catch (error) {
             console.error('Failed to add profile', error);
