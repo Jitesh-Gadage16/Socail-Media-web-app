@@ -30,6 +30,10 @@ const profileSchema = new mongoose.Schema(
                 required: "",
             },
         ],
+        profileCompleted: {
+            type: Boolean,
+            default: false
+        }
 
 
     },

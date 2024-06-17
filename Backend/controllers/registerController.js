@@ -105,7 +105,8 @@ const signInController = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                profilePic: profile.profilePicture[0]
+                profilePic: profile ? profile.profilePicture[0] : null,
+                profileCompleted: profile ? true : false
 
             },
             token,

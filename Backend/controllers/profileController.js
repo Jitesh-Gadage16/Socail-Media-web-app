@@ -58,6 +58,9 @@ const createProfile = async (req, res) => {
                     profilePicture: result.secure_url,
                 });
 
+                // Update user profileCompleted status
+                await userModel.findByIdAndUpdate(userId, { profileCompleted: true });
+
                 await newProfile.save();
 
                 return res.status(200).json({

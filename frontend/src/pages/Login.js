@@ -12,8 +12,12 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
-            navigate('/'); // Redirect to home page after successful login
+            const user = await login(email, password);
+            if (user.profileCompleted) {
+                navigate('/');
+            } else {
+                navigate('/add-profile');
+            }
         } catch (err) {
             setError('Failed to log in');
         }

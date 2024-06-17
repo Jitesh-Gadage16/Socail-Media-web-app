@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
+import AddProfile from './pages/AddProfile';
 // import AddPost from './components/Posts/AddPost';
 // import Navbar from './components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
@@ -31,6 +32,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/add-profile" element={<AddProfile />} />
           <Route path="/create-post" element={<CreatePostPage />} />
           {/* Add more routes as needed */}
         </Routes>
