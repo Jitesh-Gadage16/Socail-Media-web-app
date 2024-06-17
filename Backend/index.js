@@ -9,9 +9,11 @@ const profileRoutes = require('./routes/profileRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const postRoutes = require('./routes/postRoutes');
 const expressLayouts = require('express-ejs-layouts');
+
 // const fileUpload = require('express-fileupload');
 
 const cors = require('cors');
+app.use(cors());
 
 app.use(cors({
   origin: process.env.CORS_ORIGIN,
