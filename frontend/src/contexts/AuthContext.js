@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:3001/api/v1/login', { email, password });
+            const response = await axios.post('https://socail-media-web-app.vercel.app/api/v1/login', { email, password });
             const { token, user } = response.data;
             setUser(user);
             setToken(token);
