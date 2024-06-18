@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -68,7 +69,7 @@ function Login() {
                     <p className="text-blue-500 cursor-pointer">Forgotten your password?</p>
                 </div>
                 <div className="text-center mb-4">
-                    <p className="text-gray-500">Don't have an account? <span className="text-blue-500 cursor-pointer">Sign up</span></p>
+                    <p className="text-gray-500">Don't have an account? <Link to={"/Signup"}><span className="text-blue-500 cursor-pointer">Sign up</span></Link></p>
                 </div>
                 <div className="text-center">
                     <p className="text-gray-500 mb-2">Get the app.</p>

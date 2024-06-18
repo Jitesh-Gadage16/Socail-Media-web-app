@@ -23,15 +23,20 @@ const BottomBar = () => {
                 <FontAwesomeIcon icon={faPlus} />
                 <span>Add Post</span>
             </Link>
-            <Link to="/notifications" className="flex flex-col items-center text-sm">
+            {/* <Link to="/notifications" className="flex flex-col items-center text-sm">
                 <FontAwesomeIcon icon={faBell} />
                 <span>Notifications</span>
-            </Link>
+            </Link> */}
             {user ? (
-                <button onClick={logout} className="flex flex-col items-center text-sm">
-                    <FontAwesomeIcon icon={faSignOutAlt} />
-                    <span>Logout</span>
-                </button>
+                <>
+                    <Link to={`/profile/${user._id}`} className="flex flex-col items-center text-sm">
+                        <img src={user.profilePic} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+                    </Link>
+                    <button onClick={logout} className="flex flex-col items-center text-sm">
+                        <FontAwesomeIcon icon={faSignOutAlt} />
+                        <span>Logout</span>
+                    </button>
+                </>
             ) : (
                 <Link to="/login" className="flex flex-col items-center text-sm">
                     <FontAwesomeIcon icon={faSignInAlt} />
