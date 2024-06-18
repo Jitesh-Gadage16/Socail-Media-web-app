@@ -13,7 +13,7 @@ const expressLayouts = require('express-ejs-layouts');
 // const fileUpload = require('express-fileupload');
 
 const cors = require('cors');
-const allowedOrigins = ['https://socail-media-web-app-dt7e.vercel.app'];
+const allowedOrigins = ['https://socail-media-web-app-dt7e.vercel.app', 'http://localhost:3000/'];
 
 const corsOptions = {
   origin: function (origin, callback) {

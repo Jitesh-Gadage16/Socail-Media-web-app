@@ -13,7 +13,9 @@ const CreatePost = ({ onPostCreated }) => {
 
 
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        console.log('Selected file:', selectedFile); // Log the selected file
     };
 
     const handleCaptionChange = (e) => {
