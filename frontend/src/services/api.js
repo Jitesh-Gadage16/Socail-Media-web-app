@@ -82,6 +82,25 @@ export const addPostApi = async (formData) => {
 
 }
 
+// Function to create a new post
+export const createPost = async (base64EncodedImage, caption) => {
+    const token = localStorage.getItem('token'); // or wherever you store your JWT
+    setAuthToken(token);
+    try {
+        console.log("base64EncodedImage", base64EncodedImage)
+        const response = await fetch(`${API}/createPost`, {
+            method: 'POST',
+            body: JSON.stringify({ data: base64EncodedImage, caption }),
+            headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error(err);
+        throw new Error('Error creating post');
+    }
+};
+
 // like post 
 
 export const likePost = async (id) => {
