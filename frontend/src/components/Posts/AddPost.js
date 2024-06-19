@@ -42,6 +42,7 @@ const CreatePost = ({ onPostCreated }) => {
         reader.readAsDataURL(selectedFile);
         reader.onloadend = async () => {
             try {
+                console.log(reader.result)
                 const result = await createPost(reader.result, caption);
                 setSuccessMsg('Post created successfully');
                 setFileInputState('');

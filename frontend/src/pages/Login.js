@@ -14,9 +14,12 @@ function Login() {
         e.preventDefault();
         try {
             await login(email, password);
+            console.log(user.profileCompleted)
             if (user.profileCompleted === true) {
+                console.log("1")
                 navigate('/');
             } else {
+                console.log("2")
                 navigate('/add-profile');
             }
         } catch (err) {
