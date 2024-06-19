@@ -87,7 +87,7 @@ export const createPost = async (base64EncodedImage, caption) => {
     const token = localStorage.getItem('token'); // or wherever you store your JWT
     setAuthToken(token);
     try {
-        const response = await API.post('/createPost');
+        const response = await API.post('/createPost', { base64EncodedImage, caption });
         const data = await response.json();
         return data;
     } catch (err) {

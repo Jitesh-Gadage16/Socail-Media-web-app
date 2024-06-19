@@ -23,6 +23,7 @@ const createPost = async (req, res) => {
         // console.log("Uploaded file path:", file);
         // Extract caption from request body
         const { caption, data } = req.body;
+        console.log(data);
 
         // Upload file to Cloudinary
         const result = await uploadOnCloundinary(data);
