@@ -1,6 +1,6 @@
 require('dotenv').config()
 require("./config/database").connect()
-// const passport = require('passport')
+const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 const port = 3001; // You can use any available port
@@ -34,6 +34,9 @@ app.use(cors(corsOptions));
 // app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
 app.use(express.json()) // discuss this later       
 app.use(express.urlencoded({ extended: true }))
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 
 app.set('view engine', 'ejs');
