@@ -16,18 +16,19 @@ const createPost = async (req, res) => {
             return res.status(401).json({ message: 'User not authenticated' });
         }
         // Check if file is uploaded
-        if (!req.file) {
-            return res.status(400).json({ message: 'File is required' });
-        }
-        const file = req.file.path; // Get temporary file path
-        console.log("Uploaded file path:", file);
+        // if (!req.file) {
+        //     return res.status(400).json({ message: 'File is required' });
+        // }
+        // const file = req.file.path; // Get temporary file path
+        // console.log("Uploaded file path:", file);
+        // Extract caption from request body
+        const { caption, data } = req.body;
 
         // Upload file to Cloudinary
-        const result = await uploadOnCloundinary(file);
+        const result = await uploadOnCloundinary(data);
         console.log("File uploaded to Cloudinary:", result);
 
-        // Extract caption from request body
-        const { caption } = req.body;
+
         console.log("Caption:", caption);
 
         // Determine if the file is an image or a video
