@@ -31,7 +31,7 @@ const Home = () => {
                     fetchedPosts = await getPosts();
                     fetchedStories = [];
                 }
-                console.log("fetchedPosts", fetchedPosts.posts[0].likes)
+                // console.log("fetchedPosts", fetchedPosts.posts[0].likes)
                 console.log("fetchedStories", fetchedStories)
                 setPosts(fetchedPosts.posts);
                 setStories(fetchedStories.stories);
