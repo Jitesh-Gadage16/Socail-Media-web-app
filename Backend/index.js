@@ -13,7 +13,7 @@ const expressLayouts = require('express-ejs-layouts');
 // const fileUpload = require('express-fileupload');
 
 const cors = require('cors');
-const allowedOrigins = ['https://socail-media-web-app-dt7e.vercel.app', 'http://localhost:3000/'];
+const allowedOrigins = ['https://socail-media-web-app-dt7e.vercel.app', 'http://localhost:3000'];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -24,11 +24,16 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Enable this if you need to send cookies or HTTP Auth information
+
 };
 
 app.use(cors(corsOptions));
 
+
+// Handle preflight requests for all routes
+app.options('*', cors(corsOptions));
 
 // require('./config/passport')(passport)
 // app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
