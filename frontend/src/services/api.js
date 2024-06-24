@@ -3,9 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
 
-const API = axios.create({ baseURL: process.env.api_url });
-
-console.log("API", API)
+const API = axios.create({ baseURL: 'https://socail-media-web-app.vercel.app/api/v1' });
 
 // API.interceptors.request.use((config) => {
 //     const { token } = useAuth();
@@ -26,7 +24,7 @@ export const setAuthToken = (token) => {
 
 // Auth
 export const loginUser = async (email, password) => {
-    const response = await API.post('/login', { email, password });
+    const response = await API.post('/auth/login', { email, password });
     return response.data;
 };
 export const signupUser = (userData) => API.post('/auth/sig̀nup', userData);
