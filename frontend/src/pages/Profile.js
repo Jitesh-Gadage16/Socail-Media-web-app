@@ -13,6 +13,7 @@ const ProfilePage = () => {
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [followersCount, setFollowersCount] = useState(0);
 
     const { id } = useParams()
     console.log(id, "userId")
@@ -29,6 +30,7 @@ const ProfilePage = () => {
                 setProfile(profileResponse.profile);
                 setPosts(profileResponse.profile.posts);
                 setIsFollowing(profileResponse.profile.followers.includes(user._id));
+                setFollowersCount(profileResponse.profile.followers.length);
             } catch (error) {
                 console.error("Error fetching profile data:", error);
             }
@@ -43,8 +45,9 @@ const ProfilePage = () => {
     const handleFollowToggle = async () => {
         try {
             const updatedProfileResponse = await toggleFollow(id); // Call the new API function
-            setProfile(updatedProfileResponse.profile);
+
             setIsFollowing(updatedProfileResponse.isFollowing); // Update follow status
+            setFollowersCount(updatedProfileResponse.profile.followers.length);
         } catch (error) {
             console.error("Error toggling follow status:", error);
         }

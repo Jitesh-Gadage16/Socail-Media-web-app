@@ -52,6 +52,7 @@ export const toggleFollow = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error in toggleFollow:', error);
+        alert(error)
     }
 }
 
