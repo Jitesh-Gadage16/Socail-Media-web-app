@@ -10,11 +10,13 @@ function Login() {
     const { login, user } = useAuth();
     const navigate = useNavigate();
 
+    console.log("+++", user)
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const user = await login(email, password);
-            console.log("==>", user)
+            await login(email, password);
+            // console.log("==>", user)
             console.log(user.profileCompleted)
             if (user.profileCompleted === true) {
                 console.log("1")
