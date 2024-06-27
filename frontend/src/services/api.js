@@ -45,7 +45,7 @@ export const getProfile = async (id) => {
 }
 export const toggleFollow = async (id) => {
     try {
-        const response = await API.get(`/toggleFollow/:${id}`);
+        const response = await API.get(`/toggleFollow/${id}`);
         console.log(response.data); // Do something with the data
         return response.data;
     } catch (error) {
