@@ -262,7 +262,7 @@ const toggleFollow = async (req, res) => {
         const user = await userModel.findById(userId);
         const followUser = await userModel.findById(followId);
 
-        const profile = await profileModel.findOne({ userID: userId });
+        const profile = await profileModel.findOne({ userID: followId });
 
         if (!user || !followUser) {
             return res.status(404).json({ message: 'User not found' });
