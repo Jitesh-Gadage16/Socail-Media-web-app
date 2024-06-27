@@ -44,6 +44,8 @@ export const getProfile = async (id) => {
     }
 }
 export const toggleFollow = async (id) => {
+    const token = localStorage.getItem('token'); // or wherever you store your JWT
+    setAuthToken(token);
     try {
         const response = await API.get(`/toggleFollow/${id}`);
         console.log(response.data); // Do something with the data
