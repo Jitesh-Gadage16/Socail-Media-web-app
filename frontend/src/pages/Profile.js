@@ -40,7 +40,7 @@ const ProfilePage = () => {
 
         fetchProfile();
 
-    }, [id]);
+    }, [id, user]);
 
     const handleFollowToggle = async () => {
         try {
