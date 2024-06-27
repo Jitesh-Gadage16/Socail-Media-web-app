@@ -36,7 +36,7 @@ export const createProfile = (profileData) => API.post('/profile', profileData);
 
 export const getProfile = async (id) => {
     try {
-        const response = await API.get(`/get-profile/?userId=${id}`);
+        const response = await API.get(`/get-profile/${id}`);
         console.log(response.data); // Do something with the data
         return response.data;
     } catch (error) {

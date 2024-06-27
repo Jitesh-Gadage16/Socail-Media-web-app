@@ -257,6 +257,7 @@ const toggleFollow = async (req, res) => {
     try {
         const userId = req.user._id; // Assuming req.user contains the authenticated user
         const followId = req.params.id;
+        console.log("followId", followId)
 
         const user = await userModel.findById(userId);
         const followUser = await userModel.findById(followId);
