@@ -109,6 +109,7 @@ const Home = () => {
                     postVideo={post.video}
                     tags={post.tags}
                     likesCount={post.likes.length}
+                    userID={post.user._id}
                     onDoubleClick={() => handleDoubleClick(post._id)}
                 />
             ))}

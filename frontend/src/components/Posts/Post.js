@@ -1,10 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Post = ({ profilePic, username, postImage, timestamp, postVideo, likesCount, onDoubleClick }) => {
+const Post = ({ profilePic, username, postImage, timestamp, postVideo, likesCount, onDoubleClick, userID }) => {
     return (
         <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden" onDoubleClick={onDoubleClick}>
             <div className="flex items-center px-4 py-3">
-                <img className="h-8 w-8 rounded-full object-cover" src={profilePic} alt="profile" />
+                <Link to={`/profile/${userID}`}>
+                    <img className="h-8 w-8 rounded-full object-cover" src={profilePic} alt="profile" />
+                </Link>
                 <div className="ml-3">
                     <p className="text-gray-800 text-sm font-semibold">{username}</p>
                     <p className="text-gray-500 text-xs">{timestamp}</p>

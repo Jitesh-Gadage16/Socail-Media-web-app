@@ -216,7 +216,6 @@ const followUser = async (req, res) => {
 };
 
 //unfollowUser
-
 const unfollowUser = async (req, res) => {
     try {
         const { userIdToUnfollow } = req.params;
@@ -254,7 +253,43 @@ const unfollowUser = async (req, res) => {
     }
 };
 
+const toggleFollow = async (req, res) => {
+    try {
+        const userId = req.user._id; // Assuming req.user contains the authenticated user
+        const followId = req.params.id;
 
+        const user = await userModel.findById(userId);
+        const followUser = await userModel.findById(followId);
+
+        if (!user || !followUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isFollowing = user.following.includes(followId);
+
+        if (isFollowing) {
+            user.following.pull(followId);
+            followUser.followers.pull(userId);
+        } else {
+            user.following.push(followId);
+            followUser.followers.push(userId);
+        }
+
+        await user.save();
+        await followUser.save();
+
+        res.status(200).json({
+            message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+            profile: user,
+            isFollowing: isFollowing ? false : true
+        });
+    } catch (error) {
+        console.error('Error toggling follow status:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+//get user Profile
 const getUserProfile = async (req, res) => {
     try {
         const userId = req.query.userId;
@@ -275,32 +310,13 @@ const getUserProfile = async (req, res) => {
 
         // Fetch the user's data to get followers and following
         const user = await userModel.findById(userId, 'followers following');
+        console.log("==<", user)
 
         const followersCount = user.followers.length;
         const followingCount = user.following.length;
 
         console.log(followersCount, followingCount)
 
-        // Aggregation query to get followers and following count
-        // const counts = await userModel.aggregate([
-        //     {
-        //         $facet: {
-        //             followersCount: [
-        //                 { $match: { followArray: userId } },
-        //                 { $count: "count" }
-        //             ],
-        //             followingCount: [
-        //                 { $match: { _id: userId } },
-        //                 { $project: { followingCount: { $size: "$followArray" } } }
-        //             ]
-        //         }
-        //     }
-        // ]);
-
-        // console.log(counts, "counts")
-
-        // const followersCount = counts[0].followersCount[0] ? counts[0].followersCount[0].count : 0;
-        // const followingCount = counts[0].followingCount[0] ? counts[0].followingCount[0].followingCount : 0;
 
         console.log(profile);
 
@@ -311,7 +327,9 @@ const getUserProfile = async (req, res) => {
                 postsCount: posts.length,
                 followersCount,
                 followingCount,
-                posts
+                posts,
+                followers: user.followers,
+                followings: user.following
             }
         });
 
@@ -327,4 +345,4 @@ const getUserProfile = async (req, res) => {
 
 
 
-module.exports = { editProfile, followUser, unfollowUser, createProfile, getUserProfile };
+module.exports = { editProfile, followUser, unfollowUser, createProfile, getUserProfile, toggleFollow };

@@ -31,6 +31,9 @@ export const signupUser = (userData) => API.post('/auth/sig̀nup', userData);
 
 // Profile
 export const createProfile = (profileData) => API.post('/profile', profileData);
+
+
+
 export const getProfile = async (id) => {
     try {
         const response = await API.get(`/get-profile/?userId=${id}`);
@@ -38,6 +41,15 @@ export const getProfile = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error in getProfile:', error);
+    }
+}
+export const toggleFollow = async (id) => {
+    try {
+        const response = await API.get(`/toggleFollow/?id=${id}`);
+        console.log(response.data); // Do something with the data
+        return response.data;
+    } catch (error) {
+        console.error('Error in toggleFollow:', error);
     }
 }
 

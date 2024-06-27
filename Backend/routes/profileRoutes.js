@@ -3,7 +3,7 @@ const passport = require('passport')
 const multer = require('multer')
 // const upload = multer({ dest: '  uploads/' })
 
-const { editProfile, followUser, unfollowUser, createProfile, getUserProfile } = require('../controllers/profileController')
+const { editProfile, followUser, unfollowUser, createProfile, getUserProfile, toggleFollow } = require('../controllers/profileController')
 const { isAdmin, requireSignIn, authenticateUser } = require('../middlewares/authMiddlewares')
 // import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
@@ -25,6 +25,7 @@ router.put("/profile", upload.single('file'), editProfile);
 router.get('/get-profile', getUserProfile);
 router.post('/follow/:userIdToFollow', requireSignIn, followUser);
 router.post('/unfollow/:userIdToUnfollow', requireSignIn, unfollowUser);
+router.get('/toggleFollow/:id', requireSignIn, toggleFollow);
 
 router.post("/addtournament", requireSignIn, addTournament);
 router.put('/tournaments/:id', requireSignIn, editTournament);

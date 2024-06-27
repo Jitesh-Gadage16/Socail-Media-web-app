@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { getProfile } from '../services/api';
+import { getProfile, toggleFollow } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 // Shimmer component
 const Shimmer = () => (
@@ -11,9 +12,13 @@ const Shimmer = () => (
 const ProfilePage = () => {
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
+    const [isFollowing, setIsFollowing] = useState(false);
 
     const { id } = useParams()
     console.log(id, "userId")
+
+    const { user } = useAuth();
+    console.log("user", user)
 
     useEffect(() => {
         // Fetch profile data
@@ -22,7 +27,8 @@ const ProfilePage = () => {
                 const profileResponse = await getProfile(id);
                 console.log("profileResponse", profileResponse)
                 setProfile(profileResponse.profile);
-                setPosts(profileResponse.profile.posts)
+                setPosts(profileResponse.profile.posts);
+                setIsFollowing(profileResponse.profile.followers.includes(user._id));
             } catch (error) {
                 console.error("Error fetching profile data:", error);
             }
@@ -33,6 +39,16 @@ const ProfilePage = () => {
         fetchProfile();
 
     }, [id]);
+
+    const handleFollowToggle = async () => {
+        try {
+            const updatedProfileResponse = await toggleFollow(id); // Call the new API function
+            setProfile(updatedProfileResponse.profile);
+            setIsFollowing(updatedProfileResponse.isFollowing); // Update follow status
+        } catch (error) {
+            console.error("Error toggling follow status:", error);
+        }
+    };
 
     if (!profile) {
         return (
@@ -67,7 +83,14 @@ const ProfilePage = () => {
                 <div>
                     <div className="flex items-center space-x-4">
                         <h2 className="text-2xl font-semibold">{profile.username}</h2>
-                        <button className="text-blue-500 hover:text-blue-600">Follow</button>
+                        {user._id !== id && (
+                            <button
+                                className="text-blue-500 hover:text-blue-600"
+                                onClick={handleFollowToggle}
+                            >
+                                {isFollowing ? 'Unfollow' : 'Follow'}
+                            </button>
+                        )}
                     </div>
                     <div className="flex space-x-6 mt-2">
                         <span><strong>{posts.length}</strong> posts</span>
