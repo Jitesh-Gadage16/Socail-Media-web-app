@@ -297,7 +297,7 @@ const toggleFollow = async (req, res) => {
         res.status(200).json({
             message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
             profile: {
-                ...user.toObject(),
+                ...followUser.toObject(),
                 followersCount,
                 followingCount,
                 followers: user.followers,
