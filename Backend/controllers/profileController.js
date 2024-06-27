@@ -262,6 +262,8 @@ const toggleFollow = async (req, res) => {
         const user = await userModel.findById(userId);
         const followUser = await userModel.findById(followId);
 
+        const profile = await profileModel.findOne({ userID: userId });
+
         if (!user || !followUser) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -299,7 +301,9 @@ const toggleFollow = async (req, res) => {
                 followersCount,
                 followingCount,
                 followers: user.followers,
-                followings: user.following
+                followings: user.following,
+                profilePicture: profile.profilePicture[0],
+                username: profile.username
             },
             isFollowing: isFollowing ? false : true
         });
@@ -349,7 +353,8 @@ const getUserProfile = async (req, res) => {
                 followingCount,
                 posts,
                 followers: user.followers,
-                followings: user.following
+                followings: user.following,
+
             }
         });
 
