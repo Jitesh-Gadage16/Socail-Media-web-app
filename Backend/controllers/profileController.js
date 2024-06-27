@@ -298,7 +298,6 @@ const toggleFollow = async (req, res) => {
                 ...user.toObject(),
                 followersCount,
                 followingCount,
-                posts,
                 followers: user.followers,
                 followings: user.following
             },
