@@ -276,12 +276,33 @@ const toggleFollow = async (req, res) => {
             followUser.followers.push(userId);
         }
 
+
+        // Fetch the user's data to get followers and following
+        const followuser = await userModel.findById(userId, 'followers following');
+        console.log("==<", followuser)
+
+        const followersCount = followuser.followers.length;
+        const followingCount = followuser.following.length;
+
+        console.log(followersCount, followingCount)
+
+
+        console.log(user);
+
         await user.save();
         await followUser.save();
 
         res.status(200).json({
             message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
-            profile: user,
+            profile: {
+                ...user.toObject(),
+                postsCount: posts.length,
+                followersCount,
+                followingCount,
+                posts,
+                followers: user.followers,
+                followings: user.following
+            },
             isFollowing: isFollowing ? false : true
         });
     } catch (error) {

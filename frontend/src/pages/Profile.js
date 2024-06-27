@@ -50,6 +50,7 @@ const ProfilePage = () => {
             const newFollowersCount = updatedProfileResponse.profile.followers.length;
 
             setIsFollowing(newFollowStatus);
+            setProfile(updatedProfileResponse.profile);
             setFollowersCount(newFollowersCount);
         } catch (error) {
             console.error("Error toggling follow status:", error);
