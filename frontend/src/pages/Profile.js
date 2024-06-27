@@ -46,8 +46,11 @@ const ProfilePage = () => {
         try {
             const updatedProfileResponse = await toggleFollow(id); // Call the new API function
 
-            setIsFollowing(updatedProfileResponse.isFollowing); // Update follow status
-            setFollowersCount(updatedProfileResponse.profile.followers.length);
+            const newFollowStatus = updatedProfileResponse.isFollowing;
+            const newFollowersCount = updatedProfileResponse.profile.followers.length;
+
+            setIsFollowing(newFollowStatus);
+            setFollowersCount(newFollowersCount);
         } catch (error) {
             console.error("Error toggling follow status:", error);
         }

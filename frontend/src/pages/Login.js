@@ -13,7 +13,8 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
+            const user = await login(email, password);
+            console.log("==>", user)
             console.log(user.profileCompleted)
             if (user.profileCompleted === true) {
                 console.log("1")
