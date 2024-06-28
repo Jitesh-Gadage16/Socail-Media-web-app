@@ -43,7 +43,7 @@ const Home = () => {
                     fetchedStories = [];
                 }
                 // console.log("fetchedPosts", fetchedPosts.posts[0].likes)
-                console.log("fetchedStories", fetchedStories)
+                console.log("fetchedStories", userStory, otherUserStories)
                 setPosts(fetchedPosts.posts);
                 setLoggedInUserStory(userStory);
                 setOtherStories(otherUserStories);
