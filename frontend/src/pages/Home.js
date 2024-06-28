@@ -15,6 +15,8 @@ const Home = () => {
     const [stories, setStories] = useState([]);
     const [showStoryViewer, setShowStoryViewer] = useState(false);
     const [currentUserStories, setCurrentUserStories] = useState([]);
+    const [loggedInUserStory, setLoggedInUserStory] = useState(null);
+    const [otherStories, setOtherStories] = useState([]);
 
 
     useEffect(() => {
@@ -26,6 +28,14 @@ const Home = () => {
                     // Fetch posts from followed users if user is logged in
                     fetchedPosts = await fetchFollowedUsersPosts();
                     fetchedStories = await fetchStories();
+                    if (stories) {
+                        // Separate logged-in user's story from others
+                        const userStory = stories.find(storyGroup => storyGroup.user._id === user._id);
+                        const otherUserStories = stories.filter(storyGroup => storyGroup.user._id !== user._id);
+
+                        setLoggedInUserStory(userStory);
+                        setOtherStories(otherUserStories);
+                    }
                 } else {
                     // Fetch all posts if user is not logged in
                     fetchedPosts = await getPosts();
@@ -34,7 +44,7 @@ const Home = () => {
                 // console.log("fetchedPosts", fetchedPosts.posts[0].likes)
                 console.log("fetchedStories", fetchedStories)
                 setPosts(fetchedPosts.posts);
-                setStories(fetchedStories.stories);
+                // setStories(fetchedStories.stories);
             } catch (error) {
                 console.error('Error fetching posts:', error);
             } finally {
@@ -43,7 +53,7 @@ const Home = () => {
         };
 
         fetchPosts();
-    }, [user]);
+    }, [user, stories]);
 
     const handleDoubleClick = async (postId) => {
         console.log("clicked")
@@ -84,10 +94,30 @@ const Home = () => {
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto p-4 bg-gray-800 text-white">
-            <Addstory onStoryAdded={handleStoryAdded} />
-            {(stories && stories.length > 0) && (
-                <div className="flex space-x-4 overflow-x-auto py-4">
+            {(!loggedInUserStory || loggedInUserStory.storiesdata.length === 0) && (
+                <Addstory onStoryAdded={handleStoryAdded} />
+            )}
 
+            {loggedInUserStory && (
+                <Story
+                    key={loggedInUserStory.user._id}
+                    profilePic={loggedInUserStory.storiesdata[0].media}
+                    username={loggedInUserStory.user.name}
+                    onClick={() => handleStoryClick(loggedInUserStory.storiesdata)}
+                />
+            )}
+
+            {otherStories.map(storyGroup => (
+                <Story
+                    key={storyGroup.user._id}
+                    profilePic={storyGroup.storiesdata[0].media}
+                    username={storyGroup.user.name}
+                    onClick={() => handleStoryClick(storyGroup.storiesdata)}
+                />
+            ))}
+            {/* {(stories && stories.length > 0) && (
+                <div className="flex space-x-4 overflow-x-auto py-4">
+                    <Addstory onStoryAdded={handleStoryAdded} />
                     {stories.map(storyGroup => (
                         <Story
                             key={storyGroup.user._id}
@@ -97,7 +127,7 @@ const Home = () => {
                         />
                     ))}
                 </div>
-            )}
+            )} */}
             {posts.map(post => (
                 <Post
                     key={post._id}
