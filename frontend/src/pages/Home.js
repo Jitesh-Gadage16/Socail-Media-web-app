@@ -24,17 +24,18 @@ const Home = () => {
             try {
                 let fetchedPosts;
                 let fetchedStories;
+                let otherUserStories;
+                let userStory
                 if (user) {
                     // Fetch posts from followed users if user is logged in
                     fetchedPosts = await fetchFollowedUsersPosts();
                     fetchedStories = await fetchStories();
                     if (stories) {
                         // Separate logged-in user's story from others
-                        const userStory = stories.find(storyGroup => storyGroup.user._id === user._id);
-                        const otherUserStories = stories.filter(storyGroup => storyGroup.user._id !== user._id);
+                        userStory = stories.find(storyGroup => storyGroup.user._id === user._id);
+                        otherUserStories = stories.filter(storyGroup => storyGroup.user._id !== user._id);
 
-                        setLoggedInUserStory(userStory);
-                        setOtherStories(otherUserStories);
+
                     }
                 } else {
                     // Fetch all posts if user is not logged in
@@ -44,6 +45,8 @@ const Home = () => {
                 // console.log("fetchedPosts", fetchedPosts.posts[0].likes)
                 console.log("fetchedStories", fetchedStories)
                 setPosts(fetchedPosts.posts);
+                setLoggedInUserStory(userStory);
+                setOtherStories(otherUserStories);
                 // setStories(fetchedStories.stories);
             } catch (error) {
                 console.error('Error fetching posts:', error);
