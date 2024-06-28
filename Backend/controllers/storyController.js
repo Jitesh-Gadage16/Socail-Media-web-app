@@ -115,6 +115,9 @@ const getStoriesOfFollowedUsers = async (req, res) => {
         // Get the list of followed user IDs
         const followedUserIds = user.following.map(followedUser => followedUser._id);
 
+        // Add the current user's ID to the list
+        followedUserIds.push(userId);
+
         // Find stories created by the followed users
         const stories = await storyModel.find({
             user: { $in: followedUserIds },

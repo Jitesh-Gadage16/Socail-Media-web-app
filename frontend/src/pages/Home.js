@@ -84,10 +84,10 @@ const Home = () => {
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto p-4 bg-gray-800 text-white">
-
+            <Addstory onStoryAdded={handleStoryAdded} />
             {(stories && stories.length > 0) && (
                 <div className="flex space-x-4 overflow-x-auto py-4">
-                    <Addstory onStoryAdded={handleStoryAdded} />
+
                     {stories.map(storyGroup => (
                         <Story
                             key={storyGroup.user._id}
