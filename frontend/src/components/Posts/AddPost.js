@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 // import Alert from '../components/Alert';
-import axios from 'axios';
+// import axios from 'axios';
 import { createPost } from '../../services/api'
+import toast from "react-hot-toast";
 
 const CreatePost = ({ onPostCreated }) => {
     const [fileInputState, setFileInputState] = useState('');
@@ -13,18 +14,33 @@ const CreatePost = ({ onPostCreated }) => {
     const [loading, setLoading] = useState(false);
 
     const handleFileInputChange = (e) => {
+
         const file = e.target.files[0];
-        previewFile(file);
-        setSelectedFile(file);
-        setFileInputState(e.target.value);
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+
+        reader.onload = () => {
+            console.log("zasaz", reader.result)
+            previewFile(reader.result);
+            setSelectedFile(reader.result);
+            setFileInputState(e.target.value);
+        };
+
+
+        // const file = e.target.files[0];
+        // previewFile(file);
+        // setSelectedFile(file);
+        // setFileInputState(e.target.value);
     };
 
     const previewFile = (file) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-            setPreviewSource(reader.result);
-        };
+        setPreviewSource(file);
+        // const reader = new FileReader();
+        // reader.readAsDataURL(file);
+        // reader.onloadend = () => {
+        //     setPreviewSource(reader.result);
+        // };
     };
 
     const handleCaptionChange = (e) => {
@@ -38,29 +54,41 @@ const CreatePost = ({ onPostCreated }) => {
             return;
         }
         setLoading(true);
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = async () => {
-            try {
-                console.log(reader.result)
-                const result = await createPost(reader.result, caption);
-                setSuccessMsg('Post created successfully');
+
+
+        try {
+            const productData = new FormData();
+
+            productData.append("data", previewSource);
+            productData.append("caption", caption);
+            const result = await createPost(productData);
+
+            console.log("result", result)
+            if (result.success == true) {
+                toast.success("Post Created Successfully");
+                setSuccessMsg(result.message);
                 setFileInputState('');
                 setPreviewSource('');
                 setCaption('');
                 setSelectedFile(null);
                 setLoading(false);
-                onPostCreated(result.newPost);
-            } catch (err) {
-                console.error(err);
-                setErrMsg('Error creating post');
-                setLoading(false);
+                onPostCreated(result);
+
+            } else {
+                setErrMsg(result.message);
             }
-        };
-        reader.onerror = () => {
-            setErrMsg('Something went wrong!');
+
+
+        } catch (err) {
+            console.error(err);
+            setErrMsg('Error creating post');
             setLoading(false);
-        };
+        }
+
+        // reader.onerror = () => {
+        //     setErrMsg('Something went wrong!');
+        //     setLoading(false);
+        // };
     };
 
 

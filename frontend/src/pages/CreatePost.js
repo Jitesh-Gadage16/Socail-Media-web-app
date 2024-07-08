@@ -12,7 +12,7 @@ const CreatePostPage = () => {
     return (
         <div>
             <CreatePost onPostCreated={handlePostCreated} />
-            <div className="grid grid-cols-3 gap-4 mt-8">
+            {/* <div className="grid grid-cols-3 gap-4 mt-8">
 
 
                 {posts.map((post) => (
@@ -24,7 +24,7 @@ const CreatePostPage = () => {
                         <p>{post.caption}</p>
                     </div>
                 ))}
-            </div>
+            </div> */}
         </div>
     );
 };

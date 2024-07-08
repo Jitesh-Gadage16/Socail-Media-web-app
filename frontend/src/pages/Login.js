@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import toast from "react-hot-toast";
+
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -19,7 +21,9 @@ function Login() {
             // console.log("==>", user)
             console.log(user.profileCompleted)
             if (user.profileCompleted === true) {
-                console.log("1")
+                console.log("1");
+                alert("logged in Successfully");
+                toast.success("logged in Successfully");
                 navigate('/');
             } else {
                 console.log("2")

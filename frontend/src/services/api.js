@@ -98,12 +98,13 @@ export const addPostApi = async (formData) => {
 }
 
 // Function to create a new post
-export const createPost = async (base64EncodedImage, caption) => {
+export const createPost = async (productData) => {
     const token = localStorage.getItem('token'); // or wherever you store your JWT
     setAuthToken(token);
     try {
-        const response = await API.post('/createPost', { data: base64EncodedImage, caption });
-        const data = await response.json();
+        const response = await API.post('/createPost', productData);
+        console.log("response", response)
+        const data = await response.data;
         return data;
     } catch (err) {
         console.error(err);
