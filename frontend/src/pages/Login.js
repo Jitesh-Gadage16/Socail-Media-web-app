@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import toast from "react-hot-toast";
+
 
 
 function Login() {
@@ -14,6 +14,8 @@ function Login() {
 
     console.log("+++", user)
 
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -23,10 +25,11 @@ function Login() {
             if (user.profileCompleted === true) {
                 console.log("1");
                 alert("logged in Successfully");
-                toast.success("logged in Successfully");
+
                 navigate('/');
             } else {
                 console.log("2")
+                alert("logged in Successfully");
                 navigate('/add-profile');
             }
         } catch (err) {
@@ -63,7 +66,7 @@ function Login() {
                         />
                     </div>
                     <div className="mb-4">
-                        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Log in</button>
+                        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600" >Log in</button>
                     </div>
                 </form>
                 <div className="text-center mb-4">

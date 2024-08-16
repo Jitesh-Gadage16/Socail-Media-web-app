@@ -255,38 +255,49 @@ const unfollowUser = async (req, res) => {
 
 const toggleFollow = async (req, res) => {
     try {
-        const userId = req.user._id; // Assuming req.user contains the authenticated user
-        const followId = req.params.id;
+        const userId = req.user._id; // Assuming req.user contains the authenticated user Jitesh
+        const followId = req.params.id;// Akshay
         console.log("followId", followId)
 
-        const user = await userModel.findById(userId);
-        const followUser = await userModel.findById(followId);
+        // Validation: Prevent following/unfollowing yourself
+        if (userId === followId) {
+            return res.status(400).json({ message: "You cannot follow or unfollow yourself." });
+        }
 
-        const profile = await profileModel.findOne({ userID: followId });
+        const user = await userModel.findById(userId); //Jitesh user Details
+        console.log("Jitesh user Details", user)
+        const followUser = await userModel.findById(followId);//Akshay user Details
+        console.log("Akshay user Details", followUser)
+
+        const profile = await profileModel.findOne({ userID: followId }); // akshay profile 
+        console.log(" akshay profile", profile)
 
         if (!user || !followUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         const isFollowing = user.following.includes(followId);
+        console.log("check in Jitesh DB if Akshay is following or not")
 
         if (isFollowing) {
             user.following.pull(followId);
             followUser.followers.pull(userId);
+            console.log("if following then UnFollow");
         } else {
             user.following.push(followId);
             followUser.followers.push(userId);
+            console.log("if not following then follow");
         }
 
 
         // Fetch the user's data to get followers and following
         const followuser = await userModel.findById(userId, 'followers following');
-        console.log("==<", followuser)
+        console.log("get Jitesh followers following ==> ", followuser)
 
-        const followersCount = followuser.followers.length;
-        const followingCount = followuser.following.length;
+        // const followersCount = followuser.followers.length;
+        // const followingCount = followuser.following.length;
 
-        console.log(followersCount, followingCount)
+        // console.log("get Jitesh followers following count ==> ", followersCount, followingCount)
 
 
         console.log(user);
@@ -294,14 +305,20 @@ const toggleFollow = async (req, res) => {
         await user.save();
         await followUser.save();
 
+        // Re-fetch the user data after saving to get accurate counts
+        const updatedUser = await userModel.findById(userId, 'followers following');
+        const updatedFollowUser = await userModel.findById(followId, 'followers following');
+
+        const followersCount = updatedFollowUser.followers.length;
+        const followingCount = updatedFollowUser.following.length;
+
         res.status(200).json({
             message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
             profile: {
                 ...followUser.toObject(),
                 followersCount,
                 followingCount,
-                followers: user.followers,
-                followings: user.following,
+                ...user.toObject(),
                 profilePicture: profile.profilePicture[0],
                 username: profile.username
             },

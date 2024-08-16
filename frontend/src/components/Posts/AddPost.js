@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 // import Alert from '../components/Alert';
 // import axios from 'axios';
 import { createPost } from '../../services/api'
-import toast from "react-hot-toast";
+
+
 
 const CreatePost = ({ onPostCreated }) => {
     const [fileInputState, setFileInputState] = useState('');
@@ -64,8 +65,8 @@ const CreatePost = ({ onPostCreated }) => {
             const result = await createPost(productData);
 
             console.log("result", result)
-            if (result.success == true) {
-                toast.success("Post Created Successfully");
+            if (result.success === true) {
+                alert(result.message);
                 setSuccessMsg(result.message);
                 setFileInputState('');
                 setPreviewSource('');
