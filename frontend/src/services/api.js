@@ -119,7 +119,7 @@ export const likePost = async (id) => {
     setAuthToken(token);
 
     try {
-        const response = await API.post(`/post/?id=${id}`)
+        const response = await API.post(`/post/${id}`)
 
         return response.data;
     } catch (error) {

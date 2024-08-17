@@ -72,7 +72,7 @@ const likePost = async (req, res) => {
     try {
         const userId = req.user._id; // Assuming you have user authentication middleware
 
-        const postId = req.query.id; // Assuming the tournament ID is passed in the request params
+        const postId = req.params.id; // Assuming the tournament ID is passed in the request params
 
         console.log("=>", userId, postId)
 
