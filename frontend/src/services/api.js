@@ -119,6 +119,7 @@ export const likePost = async (id) => {
     setAuthToken(token);
 
     try {
+        console.log("post id ", id)
         const response = await API.post(`/post/${id}`)
 
         return response.data;
@@ -169,6 +170,19 @@ export const addProfile = async (formData) => {
 
 }
 
+
+// Function to get followers or following of a user
+export const getFollowersFollowing = async (id, type) => {
+    try {
+
+        console.log("==>", id, type)
+        const response = await API.get(`/api/v1/user/${id}/${type}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching ${type}:`, error);
+        throw error;
+    }
+};
 
 
 export const addPost = (postData) => API.post('/posts', postData);

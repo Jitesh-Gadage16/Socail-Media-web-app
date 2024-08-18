@@ -385,6 +385,38 @@ const getUserProfile = async (req, res) => {
     }
 };
 
+// Controller to get followers or following users
+const getUserConnections = async (req, res) => {
+    try {
+        const { id, type } = req.params; // id is the user ID, type is either 'followers' or 'following'
+
+        const user = await userModel.findById(id).populate(type, '_id name ');
+
+        // const user = await userModel.findById(id)
+        //     .populate({
+        //         path: type, // Populate 'followers' or 'following'
+        //         select: 'name', // Select 'username' from the user document
+        //         populate: {
+        //             path: 'profileModel', // Populate the 'profile' field from the Profile model
+        //             select: 'profilePicture' // Select 'profilePicture' from the Profile document
+        //         }
+        //     });
 
 
-module.exports = { editProfile, followUser, unfollowUser, createProfile, getUserProfile, toggleFollow };
+        console.log("user", user)
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the list of followers or following users
+        res.status(200).json({ [type]: user[type] });
+    } catch (error) {
+        console.error('Error fetching user connections:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+
+module.exports = { editProfile, followUser, unfollowUser, createProfile, getUserProfile, toggleFollow, getUserConnections };

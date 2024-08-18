@@ -3,7 +3,7 @@ const passport = require('passport')
 const multer = require('multer')
 // const upload = multer({ dest: '  uploads/' })
 
-const { editProfile, followUser, unfollowUser, createProfile, getUserProfile, toggleFollow } = require('../controllers/profileController')
+const { editProfile, followUser, unfollowUser, createProfile, getUserProfile, toggleFollow, getUserConnections } = require('../controllers/profileController')
 const { isAdmin, requireSignIn, authenticateUser } = require('../middlewares/authMiddlewares')
 // import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
@@ -26,6 +26,9 @@ router.get('/get-profile', getUserProfile);
 router.post('/follow/:userIdToFollow', requireSignIn, followUser);
 router.post('/unfollow/:userIdToUnfollow', requireSignIn, unfollowUser);
 router.get('/toggleFollow/:id', requireSignIn, toggleFollow);
+
+// Route to get followers or following list
+router.get('/user/:id/:type', getUserConnections);
 
 router.post("/addtournament", requireSignIn, addTournament);
 router.put('/tournaments/:id', requireSignIn, editTournament);

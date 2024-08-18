@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { getProfile, toggleFollow } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import FollowersFollowingModal from './Profile/FollowersFollowingModal'; // Correct import
+
 
 // Shimmer component
 const Shimmer = () => (
@@ -14,6 +16,9 @@ const ProfilePage = () => {
     const [posts, setPosts] = useState([]);
     const [isFollowing, setIsFollowing] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [profileID, setProfileID] = useState('');
+    const [modalType, setModalType] = useState(''); // 'followers' or 'following'
 
     const { id } = useParams()
     console.log(id, "userId")
@@ -26,7 +31,7 @@ const ProfilePage = () => {
         const fetchProfile = async () => {
             try {
                 const profileResponse = await getProfile(id);
-                console.log("profileResponse", profileResponse)
+                // console.log("profileResponse", profileResponse)
                 setProfile(profileResponse.profile);
                 setPosts(profileResponse.profile.posts);
                 setIsFollowing(profileResponse.profile.followers.includes(user._id));
@@ -55,6 +60,19 @@ const ProfilePage = () => {
         } catch (error) {
             console.error("Error toggling follow status:", error);
         }
+    };
+
+    const openModal = (modalType) => {
+
+        console.log("modalType", modalType, id)
+
+        setModalType(modalType)
+        setProfileID(id)
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
     };
 
     if (!profile) {
@@ -101,8 +119,18 @@ const ProfilePage = () => {
                     </div>
                     <div className="flex space-x-6 mt-2">
                         <span><strong>{posts.length}</strong> posts</span>
-                        <span><strong>{profile.followersCount}</strong> followers</span>
-                        <span><strong>{profile.followingCount}</strong> following</span>
+                        <span
+                            className="cursor-pointer"
+                            onClick={() => openModal('followers')}
+                        >
+                            <strong>{profile.followersCount}</strong> followers
+                        </span>
+                        <span
+                            className="cursor-pointer"
+                            onClick={() => openModal('following')}
+                        >
+                            <strong>{profile.followingCount}</strong> following
+                        </span>
                     </div>
                     <p className="mt-4">{profile.bio}</p>
                 </div>
@@ -118,6 +146,15 @@ const ProfilePage = () => {
                     </div>
                 ))}
             </div>
+
+            {/* Modal for Followers/Following */}
+            {isModalOpen && (
+                <FollowersFollowingModal
+                    userId={profileID} // Pass the profile ID
+                    type={modalType} // Pass the modal type ('followers' or 'following')
+                    onClose={closeModal} // Pass the closeModal function
+                />
+            )}
         </div>
     );
 };
