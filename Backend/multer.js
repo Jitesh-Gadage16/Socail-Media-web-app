@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
     cb(null, new Date.toString() + '-' + file.originalname)
   }
 
-
 })
 
 const fileFilter = (req, file, cb) => {

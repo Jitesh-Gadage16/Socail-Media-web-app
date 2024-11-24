@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
@@ -12,31 +12,29 @@ function Login() {
     const { login, user } = useAuth();
     const navigate = useNavigate();
 
-    console.log("+++", user)
-
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await login(email, password);
-            // console.log("==>", user)
-            console.log(user.profileCompleted)
-            if (user.profileCompleted === true) {
-                console.log("1");
-                alert("logged in Successfully");
-
-                navigate('/');
-            } else {
-                console.log("2")
-                alert("logged in Successfully");
-                navigate('/add-profile');
-            }
+            // Do not check user state here, wait for it to update
         } catch (err) {
             setError('Failed to log in');
         }
     };
 
+    useEffect(() => {
+        // Only run this effect if `user` is updated and not null
+        if (user) {
+            if (user.profileCompleted === true) {
+                alert("Logged in Successfully");
+                navigate('/');
+            } else {
+                alert("Logged in Successfully");
+                navigate('/add-profile');
+            }
+        }
+
+    }, [user, navigate]);
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
