@@ -5,14 +5,14 @@ const { siginupController, signInController } = require('../controllers/register
 // import { authenticateUser } from "../middlewares/authMiddleware.js";
 
 
-// //router object
+//router object
 const router = express.Router();
 router.get("/", (req, res) => {
   res.render('index')
 });
 
-// //routing
-// //REGISTER || METHOD POST
+//routing
+//REGISTER || METHOD POST
 router.post("/register", siginupController);
 router.post("/login", signInController);
 

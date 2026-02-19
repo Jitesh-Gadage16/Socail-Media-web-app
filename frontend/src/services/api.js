@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
 
-const API = axios.create({ baseURL: 'https://socail-media-web-app.vercel.app/api/v1' });
+// const API = axios.create({ baseURL: 'https://socail-media-web-app.vercel.app/api/v1' });
+const API = axios.create({ baseURL: 'http://localhost:3001/api/v1' });
 
 // API.interceptors.request.use((config) => {
 //     const { token } = useAuth();
